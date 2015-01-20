@@ -64,7 +64,7 @@ exports.inverse = function(mgrs) {
   return [bbox.left, bbox.bottom, bbox.right, bbox.top];
 };
 
-exports.toPoint = function(mgrsStr) {
+exports.toPoint = function(mgrs) {
   var bbox = UTMtoLL(decode(mgrs.toUpperCase()));
   if (bbox.lat && bbox.lon) {
     return [bbox.lon, bbox.lat];
