@@ -5,7 +5,7 @@
   "main": "mgrs.js",
   "scripts": {
     "test": "./node_modules/istanbul/lib/cli.js test ./node_modules/mocha/bin/_mocha test/test.js",
-    "build":"mkdir -p dist && browserify mgrs.js -s mgrs -o dist/mgrs.js"
+    "build": "mkdir -p dist && browserify mgrs.js -s mgrs | derequire > dist/mgrs.js"
   },
   "repository": {
     "type": "git",
@@ -22,9 +22,10 @@
     "url": "https://github.com/proj4js/mgrs/issues"
   },
   "devDependencies": {
-    "mocha": "~1.15.1",
+    "browserify": "^8.1.1",
+    "chai": "~1.8.1",
+    "derequire": "^1.2.0",
     "istanbul": "~0.1.46",
-    "browserify": "~2.36.1",
-    "chai": "~1.8.1"
+    "mocha": "~1.15.1"
   }
 }
