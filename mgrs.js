@@ -37,7 +37,7 @@ var Z = 90; // Z
  * @param {object} ll Object literal with lat and lon properties on a
  *     WGS84 ellipsoid.
  * @param {int} accuracy Accuracy in digits (5 for 1 m, 4 for 10 m, 3 for
- *      100 m, 4 for 1000 m or 5 for 10000 m). Optional, default is 5.
+ *      100 m, 2 for 1000 m or 1 for 10000 m). Optional, default is 5.
  * @return {string} the MGRS string for the given location and accuracy.
  */
 exports.forward = function(ll, accuracy) {
@@ -359,10 +359,9 @@ function getLetterDesignator(lat) {
  * @return {string} MGRS string for the given UTM location.
  */
 function encode(utm, accuracy) {
-  // add 100,000 to numerical locations to create leading zeroes in string
-  // the additional leading 1 will be truncated in the subsequent 'substr' commands
-  var seasting = "" + (utm.easting + 100000),
-    snorthing = "" + (utm.northing + 100000);
+  // prepend with leading zeroes
+  var seasting = "00000" + utm.easting,
+    snorthing = "00000" + utm.northing;
 
   return utm.zoneNumber + utm.zoneLetter + get100kID(utm.easting, utm.northing, utm.zoneNumber) + seasting.substr(seasting.length - 5, accuracy) + snorthing.substr(snorthing.length - 5, accuracy);
 }
