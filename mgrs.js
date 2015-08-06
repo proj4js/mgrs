@@ -359,8 +359,10 @@ function getLetterDesignator(lat) {
  * @return {string} MGRS string for the given UTM location.
  */
 function encode(utm, accuracy) {
-  var seasting = "" + utm.easting,
-    snorthing = "" + utm.northing;
+  // add 100,000 to numerical locations to create leading zeroes in string
+  // the additional leading 1 will be truncated in the subsequent 'substr' commands
+  var seasting = "" + (utm.easting + 100000),
+    snorthing = "" + (utm.northing + 100000);
 
   return utm.zoneNumber + utm.zoneLetter + get100kID(utm.easting, utm.northing, utm.zoneNumber) + seasting.substr(seasting.length - 5, accuracy) + snorthing.substr(snorthing.length - 5, accuracy);
 }

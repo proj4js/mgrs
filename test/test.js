@@ -28,4 +28,10 @@ describe('Second MGRS set', function() {
   it('MGRS reference with 1-digit accuracy correct.', function() {
     mgrs.forward(point,3).should.equal('25XEN041865');
   });
+  it('MGRS reference with 5-digit accuracy, northing all zeros', function(){
+    mgrs.forward([0,0],5).should.equal('31NAA6602100000');
+  });
+  it('MGRS reference with 5-digit accuracy, northing one digit', function(){
+    mgrs.forward([0,0.00001],5).should.equal('31NAA6602100001');
+  });
 })
