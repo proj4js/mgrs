@@ -1,6 +1,6 @@
 {
   "name": "mgrs",
-  "version": "0.0.2",
+  "version": "0.0.4-alpha",
   "description": "Utility for converting between WGS84 lat/lng and MGRS coordinates",
   "main": "mgrs.js",
   "scripts": {
