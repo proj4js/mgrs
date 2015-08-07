@@ -34,7 +34,7 @@ npm run build
 ```
 
 
-Lisensed under the MIT linsense except:
+Licensed under the MIT license except:
 
 Portions of this software are based on a port of components from the OpenMap
 com.bbn.openmap.proj.coords Java package. An initial port was initially created
