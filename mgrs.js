@@ -104,7 +104,7 @@ function radToDeg(rad) {
  *     northing, zoneNumber and zoneLetter properties, and an optional
  *     accuracy property in digits. Returns null if the conversion failed.
  */
-function LLtoUTM(ll) {
+exports.LLtoUTM = function(ll) {
   var Lat = ll.lat;
   var Long = ll.lon;
   var a = 6378137.0; //ellip.radius;
