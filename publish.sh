@@ -11,7 +11,7 @@ git commit -m "build $VERSION"
 
 # Tag and push
 git tag $VERSION
-git push --tags git@github.com:proj4js/mgrs.git $VERSION
+git push --tags git@github.com:pwilczynski/mgrs.git $VERSION
 
 # Publish
 npm publish
