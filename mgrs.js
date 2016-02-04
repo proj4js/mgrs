@@ -287,8 +287,8 @@ function UTMtoLL(utm) {
   return result;
 }
 
-exports.latZone = function(lat) {
-  return getLetterDesignator(lat);
+exports.latZone = function(ll) {
+  return getLetterDesignator(ll.lat);
 }
 
 /**
