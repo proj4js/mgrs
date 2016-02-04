@@ -96,33 +96,37 @@ function radToDeg(rad) {
   return (180.0 * (rad / Math.PI));
 }
 
+function lonZone(ll) {
+  var Lat = ll.lat;
+  var Long = ll.lon;
+  ZoneNumber = Math.floor((Long + 180) / 6) + 1;
+
+  //Make sure the longitude 180.00 is in Zone 60
+  if (Long == 180) {
+      ZoneNumber = 60;
+  }
+
+  // Special zone for Norway
+  if (Lat >= 56.0 && Lat < 64.0 && Long >= 3.0 && Long < 12.0) {
+      ZoneNumber = 32;
+  }
+
+  // Special zones for Svalbard
+  if (Lat >= 72.0 && Lat < 84.0) {
+      if (Long >= 0.0 && Long < 9.0)
+          ZoneNumber = 31;
+      else if (Long >= 9.0 && Long < 21.0)
+          ZoneNumber = 33;
+      else if (Long >= 21.0 && Long < 33.0)
+          ZoneNumber = 35;
+      else if (Long >= 33.0 && Long < 42.0)
+          ZoneNumber = 37;
+  }
+  return ZoneNumber;
+}
+
 exports.lonZone = function(ll) {
-    var Lat = ll.lat;
-    var Long = ll.lon;
-    ZoneNumber = Math.floor((Long + 180) / 6) + 1;
-
-    //Make sure the longitude 180.00 is in Zone 60
-    if (Long == 180) {
-        ZoneNumber = 60;
-    }
-
-    // Special zone for Norway
-    if (Lat >= 56.0 && Lat < 64.0 && Long >= 3.0 && Long < 12.0) {
-        ZoneNumber = 32;
-    }
-
-    // Special zones for Svalbard
-    if (Lat >= 72.0 && Lat < 84.0) {
-        if (Long >= 0.0 && Long < 9.0)
-            ZoneNumber = 31;
-        else if (Long >= 9.0 && Long < 21.0)
-            ZoneNumber = 33;
-        else if (Long >= 21.0 && Long < 33.0)
-            ZoneNumber = 35;
-        else if (Long >= 33.0 && Long < 42.0)
-            ZoneNumber = 37;
-    }
-    return ZoneNumber;
+  return lonZone(ll);
 }
 
 /**
@@ -136,7 +140,8 @@ exports.lonZone = function(ll) {
  *     northing, zoneNumber and zoneLetter properties, and an optional
  *     accuracy property in digits. Returns null if the conversion failed.
  */
-exports.LLtoUTM = function(ll) {
+
+function LLtoUTM(ll) {
   var Lat = ll.lat;
   var Long = ll.lon;
   var a = 6378137.0; //ellip.radius;
@@ -179,6 +184,10 @@ exports.LLtoUTM = function(ll) {
     zoneNumber: ZoneNumber,
     zoneLetter: getLetterDesignator(Lat)
   };
+}
+
+exports.LLtoUTM = function(ll) {
+  return LLtoUTM(ll);
 }
 
 /**
