@@ -32,13 +32,16 @@ var O = 79; // O
 var V = 86; // V
 var Z = 90; // Z
 
+var ZDLS = "CDEFGHJKLMNPQRSTUVWX";
+exports.ZDLS = ZDLS;
+
 /**
  * Conversion of lat/lon to MGRS.
  *
  * @param {object} ll Object literal with lat and lon properties on a
  *     WGS84 ellipsoid.
  * @param {int} accuracy Accuracy in digits (5 for 1 m, 4 for 10 m, 3 for
- *      100 m, 4 for 1000 m or 5 for 10000 m). Optional, default is 5.
+ *      100 m, 2 for 1000 m or 1 for 10000 m). Optional, default is 5.
  * @return {string} the MGRS string for the given location and accuracy.
  */
 exports.forward = function(ll, accuracy) {
@@ -94,6 +97,39 @@ function radToDeg(rad) {
   return (180.0 * (rad / Math.PI));
 }
 
+function lonZone(ll) {
+  var Lat = ll.lat;
+  var Long = ll.lon;
+  ZoneNumber = Math.floor((Long + 180) / 6) + 1;
+
+  //Make sure the longitude 180.00 is in Zone 60
+  if (Long == 180) {
+      ZoneNumber = 60;
+  }
+
+  // Special zone for Norway
+  if (Lat >= 56.0 && Lat < 64.0 && Long >= 3.0 && Long < 12.0) {
+      ZoneNumber = 32;
+  }
+
+  // Special zones for Svalbard
+  if (Lat >= 72.0 && Lat < 84.0) {
+      if (Long >= 0.0 && Long < 9.0)
+          ZoneNumber = 31;
+      else if (Long >= 9.0 && Long < 21.0)
+          ZoneNumber = 33;
+      else if (Long >= 21.0 && Long < 33.0)
+          ZoneNumber = 35;
+      else if (Long >= 33.0 && Long < 42.0)
+          ZoneNumber = 37;
+  }
+  return ZoneNumber;
+}
+
+exports.lonZone = function(ll) {
+  return lonZone(ll);
+}
+
 /**
  * Converts a set of Longitude and Latitude co-ordinates to UTM
  * using the WGS84 ellipsoid.
@@ -105,6 +141,7 @@ function radToDeg(rad) {
  *     northing, zoneNumber and zoneLetter properties, and an optional
  *     accuracy property in digits. Returns null if the conversion failed.
  */
+
 function LLtoUTM(ll) {
   var Lat = ll.lat;
   var Long = ll.lon;
@@ -117,35 +154,8 @@ function LLtoUTM(ll) {
   var LatRad = degToRad(Lat);
   var LongRad = degToRad(Long);
   var LongOriginRad;
-  var ZoneNumber;
   // (int)
-  ZoneNumber = Math.floor((Long + 180) / 6) + 1;
-
-  //Make sure the longitude 180.00 is in Zone 60
-  if (Long === 180) {
-    ZoneNumber = 60;
-  }
-
-  // Special zone for Norway
-  if (Lat >= 56.0 && Lat < 64.0 && Long >= 3.0 && Long < 12.0) {
-    ZoneNumber = 32;
-  }
-
-  // Special zones for Svalbard
-  if (Lat >= 72.0 && Lat < 84.0) {
-    if (Long >= 0.0 && Long < 9.0) {
-      ZoneNumber = 31;
-    }
-    else if (Long >= 9.0 && Long < 21.0) {
-      ZoneNumber = 33;
-    }
-    else if (Long >= 21.0 && Long < 33.0) {
-      ZoneNumber = 35;
-    }
-    else if (Long >= 33.0 && Long < 42.0) {
-      ZoneNumber = 37;
-    }
-  }
+  var ZoneNumber = lonZone(ll);
 
   LongOrigin = (ZoneNumber - 1) * 6 - 180 + 3; //+3 puts origin
   // in middle of
@@ -175,6 +185,10 @@ function LLtoUTM(ll) {
     zoneNumber: ZoneNumber,
     zoneLetter: getLetterDesignator(Lat)
   };
+}
+
+exports.LLtoUTM = function(ll) {
+  return LLtoUTM(ll);
 }
 
 /**
@@ -274,6 +288,14 @@ function UTMtoLL(utm) {
   return result;
 }
 
+exports.UTMtoLL = function(utm) {
+  return UTMtoLL(utm);
+}
+
+exports.latZone = function(ll) {
+  return getLetterDesignator(ll.lat);
+}
+
 /**
  * Calculates the MGRS letter designator for the given latitude.
  *
@@ -360,8 +382,9 @@ function getLetterDesignator(lat) {
  * @return {string} MGRS string for the given UTM location.
  */
 function encode(utm, accuracy) {
-  var seasting = "" + utm.easting,
-    snorthing = "" + utm.northing;
+  // prepend with leading zeroes
+  var seasting = "00000" + utm.easting,
+    snorthing = "00000" + utm.northing;
 
   return utm.zoneNumber + utm.zoneLetter + get100kID(utm.easting, utm.northing, utm.zoneNumber) + seasting.substr(seasting.length - 5, accuracy) + snorthing.substr(snorthing.length - 5, accuracy);
 }
@@ -739,6 +762,39 @@ function getMinNorthing(zoneLetter) {
     throw ("Invalid zone letter: " + zoneLetter);
   }
 
+}
+
+exports.zoneBounds = function(zoneNumber, zoneLetter) {
+    var latIndex = ZDLS.indexOf(zoneLetter);
+    var minLon = (zoneNumber - 1) * 6.0 - 180.0;
+    var minLat = latIndex * 8.0 - 80.0;
+    var latRange = 8.0;
+    var lonRange = 6.0;
+    if (zoneLetter == 'X') {
+        latRange = 12.0;
+        if (zoneNumber == 31) {
+            lonRange = 9.0;
+        } else if (zoneNumber == 37) {
+            minLon -= 3.0;
+            lonRange = 9.0;
+        } else if (zoneNumber == 33 || zoneNumber == 35) {
+            lonRange = 12.0;
+            minLon -= 3.0;
+        }
+    } else if (zoneLetter == 'V') { // Norway special case areas.
+        if (zoneNumber == 31) {
+            lonRange = 3.0;
+        } else if (zoneNumber == 32) {
+            minLon -= 3.0;
+            lonRange = 9.0;
+        }
+    }
+    return {
+        minLon: minLon,
+        minLat: minLat,
+        lonRange: lonRange,
+        latRange: latRange
+    }
 }
 
 },{}]},{},[1])(1)
