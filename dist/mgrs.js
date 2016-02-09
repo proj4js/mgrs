@@ -288,6 +288,10 @@ function UTMtoLL(utm) {
   return result;
 }
 
+exports.UTMtoLL = function(utm) {
+  return UTMtoLL(utm);
+}
+
 exports.latZone = function(ll) {
   return getLetterDesignator(ll.lat);
 }
