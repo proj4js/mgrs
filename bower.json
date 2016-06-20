@@ -1,0 +1,29 @@
+{
+  "name": "mgrs",
+  "description": "Utility for converting between WGS84 lat/lng and MGRS coordinates",
+  "main": "mgrs.js",
+  "authors": [
+    "Proj4 Team",
+    "OpenMap",
+    "Mike Adair",
+    "Richard Greenwood",
+    "Didier Richard",
+    "Stephen Irons",
+    "Olivier Terral",
+    "Calvin Metcalf"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "mgrs",
+    "proj4",
+    "gis"
+  ],
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
