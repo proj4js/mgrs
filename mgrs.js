@@ -40,7 +40,7 @@ var Z = 90; // Z
  *      100 m, 2 for 1000 m or 1 for 10000 m). Optional, default is 5.
  * @return {string} the MGRS string for the given location and accuracy.
  */
-exports.forward = function(ll, accuracy) {
+export function forward(ll, accuracy) {
   accuracy = accuracy || 5; // default accuracy 1m
   return encode(LLtoUTM({
     lat: ll[1],
@@ -56,7 +56,7 @@ exports.forward = function(ll, accuracy) {
  *     (longitude) and top (latitude) values in WGS84, representing the
  *     bounding box for the provided MGRS reference.
  */
-exports.inverse = function(mgrs) {
+export function inverse(mgrs) {
   var bbox = UTMtoLL(decode(mgrs.toUpperCase()));
   if (bbox.lat && bbox.lon) {
     return [bbox.lon, bbox.lat, bbox.lon, bbox.lat];
@@ -64,7 +64,7 @@ exports.inverse = function(mgrs) {
   return [bbox.left, bbox.bottom, bbox.right, bbox.top];
 };
 
-exports.toPoint = function(mgrs) {
+export function toPoint(mgrs) {
   var bbox = UTMtoLL(decode(mgrs.toUpperCase()));
   if (bbox.lat && bbox.lon) {
     return [bbox.lon, bbox.lat];
