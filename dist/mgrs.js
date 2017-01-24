@@ -1,6 +1,8 @@
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.mgrs=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
-
-
+(function (global, factory) {
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+	typeof define === 'function' && define.amd ? define(['exports'], factory) :
+	(factory((global.mgrs = global.mgrs || {})));
+}(this, (function (exports) { 'use strict';
 
 /**
  * UTM zones are grouped, and assigned to one of a group of 6
@@ -38,16 +40,16 @@ var Z = 90; // Z
  * @param {object} ll Object literal with lat and lon properties on a
  *     WGS84 ellipsoid.
  * @param {int} accuracy Accuracy in digits (5 for 1 m, 4 for 10 m, 3 for
- *      100 m, 4 for 1000 m or 5 for 10000 m). Optional, default is 5.
+ *      100 m, 2 for 1000 m or 1 for 10000 m). Optional, default is 5.
  * @return {string} the MGRS string for the given location and accuracy.
  */
-exports.forward = function(ll, accuracy) {
+function forward(ll, accuracy) {
   accuracy = accuracy || 5; // default accuracy 1m
   return encode(LLtoUTM({
     lat: ll[1],
     lon: ll[0]
   }), accuracy);
-};
+}
 
 /**
  * Conversion of MGRS to lat/lon.
@@ -57,21 +59,21 @@ exports.forward = function(ll, accuracy) {
  *     (longitude) and top (latitude) values in WGS84, representing the
  *     bounding box for the provided MGRS reference.
  */
-exports.inverse = function(mgrs) {
+function inverse(mgrs) {
   var bbox = UTMtoLL(decode(mgrs.toUpperCase()));
   if (bbox.lat && bbox.lon) {
     return [bbox.lon, bbox.lat, bbox.lon, bbox.lat];
   }
   return [bbox.left, bbox.bottom, bbox.right, bbox.top];
-};
+}
 
-exports.toPoint = function(mgrs) {
+function toPoint(mgrs) {
   var bbox = UTMtoLL(decode(mgrs.toUpperCase()));
   if (bbox.lat && bbox.lon) {
     return [bbox.lon, bbox.lat];
   }
   return [(bbox.left + bbox.right) / 2, (bbox.top + bbox.bottom) / 2];
-};
+}
 /**
  * Conversion from degrees to radians.
  *
@@ -360,8 +362,9 @@ function getLetterDesignator(lat) {
  * @return {string} MGRS string for the given UTM location.
  */
 function encode(utm, accuracy) {
-  var seasting = "" + utm.easting,
-    snorthing = "" + utm.northing;
+  // prepend with leading zeroes
+  var seasting = "00000" + utm.easting,
+    snorthing = "00000" + utm.northing;
 
   return utm.zoneNumber + utm.zoneLetter + get100kID(utm.easting, utm.northing, utm.zoneNumber) + seasting.substr(seasting.length - 5, accuracy) + snorthing.substr(snorthing.length - 5, accuracy);
 }
@@ -741,5 +744,10 @@ function getMinNorthing(zoneLetter) {
 
 }
 
-},{}]},{},[1])(1)
-});
+exports.forward = forward;
+exports.inverse = inverse;
+exports.toPoint = toPoint;
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+})));
