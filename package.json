@@ -5,7 +5,7 @@
   "main": "dist/mgrs.js",
   "module": "mgrs.js",
   "scripts": {
-    "test": "./node_modules/istanbul/lib/cli.js test ./node_modules/mocha/bin/_mocha test/test.js",
+    "test": "npm run build && istanbul test _mocha test/test.js",
     "build": "mkdir -p dist && rollup -o dist/mgrs.js -f umd -n mgrs mgrs.js"
   },
   "repository": {

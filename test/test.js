@@ -1,5 +1,5 @@
 var should = require('chai').should();
-var mgrs = require('../mgrs');
+var mgrs = require('../dist/mgrs');
 describe('First MGRS set', function() {
   var mgrsStr = "33UXP04";
   var point = mgrs.toPoint(mgrsStr);
