@@ -30,7 +30,11 @@ var I = 73; // I
 var O = 79; // O
 var V = 86; // V
 var Z = 90; // Z
-
+export default {
+  forward: forward,
+  inverse: inverse,
+  toPoint: toPoint
+};
 /**
  * Conversion of lat/lon to MGRS.
  *

@@ -33,7 +33,11 @@ var I = 73; // I
 var O = 79; // O
 var V = 86; // V
 var Z = 90; // Z
-
+var mgrs = {
+  forward: forward,
+  inverse: inverse,
+  toPoint: toPoint
+};
 /**
  * Conversion of lat/lon to MGRS.
  *
@@ -744,6 +748,7 @@ function getMinNorthing(zoneLetter) {
 
 }
 
+exports['default'] = mgrs;
 exports.forward = forward;
 exports.inverse = inverse;
 exports.toPoint = toPoint;
