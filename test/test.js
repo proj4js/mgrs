@@ -10,7 +10,7 @@ describe('First MGRS set', function() {
     point[1].should.be.closeTo(48.24949, 0.000001);
   });
   it('MGRS reference with highest accuracy correct.', function() {
-    mgrs.forward(point).should.equal("33UXP0500444998");
+    mgrs.forward(point).should.equal("33UXP0500444997");
   });
   it('MGRS reference with 1-digit accuracy correct.', function() {
     mgrs.forward(point,1).should.equal(mgrsStr);
@@ -33,5 +33,13 @@ describe('Second MGRS set', function() {
   });
   it('MGRS reference with 5-digit accuracy, northing one digit', function(){
     mgrs.forward([0,0.00001],5).should.equal('31NAA6602100001');
+  });
+})
+
+describe ('third mgrs set', function () {
+  var mgrsStr = '11SPA7234911844';
+  var point = [-115.0820944, 36.2361322]
+  it('MGRS reference with highest accuracy correct.', function() {
+    mgrs.forward(point).should.equal(mgrsStr);
   });
 })
