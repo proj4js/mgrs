@@ -173,8 +173,8 @@ function LLtoUTM(ll) {
   }
 
   return {
-    northing: Math.round(UTMNorthing),
-    easting: Math.round(UTMEasting),
+    northing: Math.trunc(UTMNorthing),
+    easting: Math.trunc(UTMEasting),
     zoneNumber: ZoneNumber,
     zoneLetter: getLetterDesignator(Lat)
   };
