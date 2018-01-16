@@ -378,7 +378,7 @@ function encode(utm, accuracy) {
  * @param {number} easting
  * @param {number} northing
  * @param {number} zoneNumber
- * @return the two letter 100k designator for the given UTM location.
+ * @return {string} the two letter 100k designator for the given UTM location.
  */
 function get100kID(easting, northing, zoneNumber) {
   var setParm = get100kSetForZone(zoneNumber);
@@ -417,7 +417,7 @@ function get100kSetForZone(i) {
  * @param {number} parm the set block, as it relates to the MGRS 100k set
  *        spreadsheet, created from the UTM zone. Values are from
  *        1-60.
- * @return two letter MGRS 100k code.
+ * @return {string} two letter MGRS 100k code.
  */
 function getLetter100kID(column, row, parm) {
   // colOrigin and rowOrigin are the letters at the origin of the set
