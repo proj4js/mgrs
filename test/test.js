@@ -25,7 +25,7 @@ describe('Second MGRS set', function() {
   it('Latitude of point from MGRS correct.', function() {
     point[1].should.be.closeTo(83.62778, 0.00001);
   });
-  it('MGRS reference with 1-digit accuracy correct.', function() {
+  it('MGRS reference with 3-digit accuracy correct.', function() {
     mgrs.forward(point,3).should.equal('25XEN041865');
   });
   it('MGRS reference with 5-digit accuracy, northing all zeros', function(){
