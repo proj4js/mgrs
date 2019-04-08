@@ -21,12 +21,6 @@ test with
 npm test
 ```
 
-test coverage with
-
-```bash
-npm test --coverage
-```
-
 build with
 
 ```bash
