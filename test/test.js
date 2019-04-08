@@ -44,3 +44,43 @@ describe ('third mgrs set', () => {
     mgrs.forward(point).should.equal(mgrsStr);
   });
 });
+
+describe ('data validation', () => {
+  describe('forward function', () => {
+    it('forward throws an error when array of strings passed in', () => {
+      try {
+        mgrs.forward(['40', '40']);
+      } catch (error) {
+        error.should.equal('forward received an array of strings, but it only accepts an array of numbers.');
+      }
+    });
+    it('forward throws an error when longitude is outside bounds', () => {
+      try {
+        mgrs.forward([90, 180]);
+      } catch (error) {
+        error.should.equal('forward received an invalid latitude of 180');
+      }
+    });
+    it('forward throws an error when latitude is outside bounds', () => {
+      try {
+        mgrs.forward([90, 270]);
+      } catch (error) {
+        error.should.equal('forward received an invalid latitude of 270');
+      }
+    });
+    it('forward throws an error when latitude is near the north pole', () => {
+      try {
+        mgrs.forward([45, 88]);
+      } catch (error) {
+        error.should.equal('forward received a latitude of 88, but this library does not support conversions of points in polar regions below 80°S and above 84°N');
+      }
+    });
+    it('forward throws an error when latitude is near the south pole', () => {
+      try {
+        mgrs.forward([45, -88]);
+      } catch (error) {
+        error.should.equal('forward received a latitude of -88, but this library does not support conversions of points in polar regions below 80°S and above 84°N');
+      }
+    });
+  });
+});
