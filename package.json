@@ -5,6 +5,7 @@
   "main": "dist/mgrs.js",
   "module": "mgrs.js",
   "scripts": {
+    "lint": "eslint mgrs.js && eslint test",
     "test": "npm run build && nyc mocha",
     "build": "mkdir -p dist && rollup -c"
   },
@@ -24,6 +25,7 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
+    "eslint": "^5.16.0",
     "mocha": "^6.1.1",
     "nyc": "^13.3.0",
     "rollup": "^1.9.0"
