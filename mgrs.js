@@ -86,6 +86,9 @@ export function inverse(mgrs) {
 }
 
 export function toPoint(mgrs) {
+  if (mgrs === '') {
+    throw (`toPoint received a blank string`);
+  }
   const bbox = UTMtoLL(decode(mgrs.toUpperCase()));
   if (bbox.lat && bbox.lon) {
     return [bbox.lon, bbox.lat];
