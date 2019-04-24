@@ -28,9 +28,9 @@ const O = 79; // O
 const V = 86; // V
 const Z = 90; // Z
 export default {
-  forward: forward,
-  inverse: inverse,
-  toPoint: toPoint
+  forward,
+  inverse,
+  toPoint
 };
 
 
@@ -216,8 +216,7 @@ function UTMtoLL(utm) {
 
   const UTMNorthing = utm.northing;
   const UTMEasting = utm.easting;
-  const zoneLetter = utm.zoneLetter;
-  const zoneNumber = utm.zoneNumber;
+  const { zoneLetter, zoneNumber } = utm;
   // check the ZoneNummber is valid
   if (zoneNumber < 0 || zoneNumber > 60) {
     return null;
@@ -283,8 +282,8 @@ function UTMtoLL(utm) {
   }
   else {
     result = {
-      lat: lat,
-      lon: lon
+      lat,
+      lon
     };
   }
   return result;
@@ -506,7 +505,7 @@ function decode(mgrsString) {
     throw new TypeError('MGRSPoint coverting from nothing');
   }
 
-  const length = mgrsString.length;
+  const { length } = mgrsString;
 
   let hunK = null;
   let sb = '';
@@ -579,10 +578,10 @@ northing meters ${mgrsString}`);
   const northing = sepNorthing + north100k;
 
   return {
-    easting: easting,
-    northing: northing,
-    zoneLetter: zoneLetter,
-    zoneNumber: zoneNumber,
+    easting,
+    northing,
+    zoneLetter,
+    zoneNumber,
     accuracy: accuracyBonus
   };
 }
