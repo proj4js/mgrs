@@ -47,23 +47,23 @@ export function forward(ll, accuracy) {
   accuracy = accuracy || 5; // default accuracy 1m
 
   if (!Array.isArray(ll)) {
-    throw ('forward did not receive an array');
+    throw new TypeError('forward did not receive an array');
   }
 
   if (typeof ll[0] === 'string' || typeof ll[1] === 'string') {
-    throw ('forward received an array of strings, but it only accepts an array of numbers.');
+    throw new TypeError('forward received an array of strings, but it only accepts an array of numbers.');
   }
 
   const [ lon, lat ] = ll;
   if (lon < -180 || lon > 180) {
-    throw (`forward received an invalid longitude of ${lon}`);
+    throw new TypeError(`forward received an invalid longitude of ${lon}`);
   }
   if (lat < -90 || lat > 90) {
-    throw (`forward received an invalid latitude of ${lat}`);
+    throw new TypeError(`forward received an invalid latitude of ${lat}`);
   }
 
   if (lat < -80 || lat > 84) {
-    throw (`forward received a latitude of ${lat}, but this library does not support conversions of points in polar regions below 80°S and above 84°N`);
+    throw new TypeError(`forward received a latitude of ${lat}, but this library does not support conversions of points in polar regions below 80°S and above 84°N`);
   }
 
   return encode(LLtoUTM({ lat, lon }), accuracy);
@@ -87,7 +87,7 @@ export function inverse(mgrs) {
 
 export function toPoint(mgrs) {
   if (mgrs === '') {
-    throw (`toPoint received a blank string`);
+    throw new TypeError(`toPoint received a blank string`);
   }
   const bbox = UTMtoLL(decode(mgrs.toUpperCase()));
   if (bbox.lat && bbox.lon) {
@@ -503,7 +503,7 @@ function getLetter100kID(column, row, parm) {
 function decode(mgrsString) {
 
   if (mgrsString && mgrsString.length === 0) {
-    throw ('MGRSPoint coverting from nothing');
+    throw new TypeError('MGRSPoint coverting from nothing');
   }
 
   const length = mgrsString.length;
@@ -516,7 +516,7 @@ function decode(mgrsString) {
   // get Zone number
   while (!(/[A-Z]/).test(testChar = mgrsString.charAt(i))) {
     if (i >= 2) {
-      throw (`MGRSPoint bad conversion from: ${mgrsString}`);
+      throw new Error(`MGRSPoint bad conversion from: ${mgrsString}`);
     }
     sb += testChar;
     i++;
@@ -527,14 +527,14 @@ function decode(mgrsString) {
   if (i === 0 || i + 3 > length) {
     // A good MGRS string has to be 4-5 digits long,
     // ##AAA/#AAA at least.
-    throw (`MGRSPoint bad conversion from ${mgrsString}`);
+    throw new Error(`MGRSPoint bad conversion from ${mgrsString}`);
   }
 
   const zoneLetter = mgrsString.charAt(i++);
 
   // Should we check the zone letter here? Why not.
   if (zoneLetter <= 'A' || zoneLetter === 'B' || zoneLetter === 'Y' || zoneLetter >= 'Z' || zoneLetter === 'I' || zoneLetter === 'O') {
-    throw (`MGRSPoint zone letter ${zoneLetter} not handled: ${mgrsString}`);
+    throw new Error(`MGRSPoint zone letter ${zoneLetter} not handled: ${mgrsString}`);
   }
 
   hunK = mgrsString.substring(i, i += 2);
@@ -556,7 +556,10 @@ function decode(mgrsString) {
   const remainder = length - i;
 
   if (remainder % 2 !== 0) {
-    throw (`MGRSPoint has to have an even number \nof digits after the zone letter and two 100km letters - front \nhalf for easting meters, second half for \nnorthing meters ${mgrsString}`);
+    throw new Error(`MGRSPoint has to have an even number
+of digits after the zone letter and two 100km letters - front
+half for easting meters, second half for
+northing meters ${mgrsString}`);
   }
 
   const sep = remainder / 2;
@@ -611,7 +614,7 @@ function getEastingFromChar(e, set) {
     }
     if (curCol > Z) {
       if (rewindMarker) {
-        throw (`Bad character: ${e}`);
+        throw new Error(`Bad character: ${e}`);
       }
       curCol = A;
       rewindMarker = true;
@@ -641,7 +644,7 @@ function getEastingFromChar(e, set) {
 function getNorthingFromChar(n, set) {
 
   if (n > 'V') {
-    throw (`MGRSPoint given invalid Northing ${n}`);
+    throw new TypeError(`MGRSPoint given invalid Northing ${n}`);
   }
 
   // rowOrigin is the letter at the origin of the set for the
@@ -662,7 +665,7 @@ function getNorthingFromChar(n, set) {
     // when 'n' is a wrong character
     if (curRow > V) {
       if (rewindMarker) { // making sure that this loop ends
-        throw (`Bad character: ${n}`);
+        throw new Error(`Bad character: ${n}`);
       }
       curRow = A;
       rewindMarker = true;
@@ -753,7 +756,7 @@ function getMinNorthing(zoneLetter) {
     return northing;
   }
   else {
-    throw (`Invalid zone letter: ${zoneLetter}`);
+    throw new TypeError(`Invalid zone letter: ${zoneLetter}`);
   }
 
 }
