@@ -50,43 +50,55 @@ describe ('data validation', () => {
     it('toPoint throws an error when a blank string is passed in', () => {
       try {
         mgrs.toPoint('');
+        false.should.be.true; // to make sure it errors
       } catch (error) {
-        error.should.equal('toPoint received a blank string');
+        error.should.be.a('error');
+        error.message.should.equal('toPoint received a blank string');
       }
     });
     it('forward throws an error when array of strings passed in', () => {
       try {
         mgrs.forward(['40', '40']);
+        false.should.be.true; // to make sure it errors
       } catch (error) {
-        error.should.equal('forward received an array of strings, but it only accepts an array of numbers.');
+        error.should.be.a('error');
+        error.message.should.equal('forward received an array of strings, but it only accepts an array of numbers.');
       }
     });
     it('forward throws an error when longitude is outside bounds', () => {
       try {
         mgrs.forward([90, 180]);
+        false.should.be.true; // to make sure it errors
       } catch (error) {
-        error.should.equal('forward received an invalid latitude of 180');
+        error.should.be.a('error');
+        error.message.should.equal('forward received an invalid latitude of 180');
       }
     });
     it('forward throws an error when latitude is outside bounds', () => {
       try {
         mgrs.forward([90, 270]);
+        false.should.be.true; // to make sure it errors
       } catch (error) {
-        error.should.equal('forward received an invalid latitude of 270');
+        error.should.be.a('error');
+        error.message.should.equal('forward received an invalid latitude of 270');
       }
     });
     it('forward throws an error when latitude is near the north pole', () => {
       try {
         mgrs.forward([45, 88]);
+        false.should.be.true; // to make sure it errors
       } catch (error) {
-        error.should.equal('forward received a latitude of 88, but this library does not support conversions of points in polar regions below 80°S and above 84°N');
+        error.should.be.a('error');
+        error.message.should.equal('forward received a latitude of 88, but this library does not support conversions of points in polar regions below 80°S and above 84°N');
       }
     });
     it('forward throws an error when latitude is near the south pole', () => {
       try {
         mgrs.forward([45, -88]);
+        false.should.be.true; // to make sure it errors
       } catch (error) {
-        error.should.equal('forward received a latitude of -88, but this library does not support conversions of points in polar regions below 80°S and above 84°N');
+        error.should.be.a('error');
+        error.message.should.equal('forward received a latitude of -88, but this library does not support conversions of points in polar regions below 80°S and above 84°N');
       }
     });
   });
