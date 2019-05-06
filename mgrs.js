@@ -505,6 +505,9 @@ function decode(mgrsString) {
     throw new TypeError('MGRSPoint coverting from nothing');
   }
 
+  //remove any spaces in MGRS String
+  mgrsString = mgrsString.replace(/ /g, '');
+
   const { length } = mgrsString;
 
   let hunK = null;

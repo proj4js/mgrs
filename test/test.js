@@ -46,7 +46,7 @@ describe ('third mgrs set', () => {
 });
 
 describe ('data validation', () => {
-  describe('forward function', () => {
+  describe('toPoint function', () => {
     it('toPoint throws an error when a blank string is passed in', () => {
       try {
         mgrs.toPoint('');
@@ -56,6 +56,14 @@ describe ('data validation', () => {
         error.message.should.equal('toPoint received a blank string');
       }
     });
+    it('toPoint should return the same result whether or not spaces are included in the MGRS String', () => {
+      const [ lon1, lat1 ] = mgrs.toPoint('4QFJ 12345 67890');
+      const [ lon2, lat2]  = mgrs.toPoint('4QFJ1234567890');
+      lat1.should.equal(lat2);
+      lon1.should.equal(lon2);
+    });
+  });
+  describe('forward function', () => {
     it('forward throws an error when array of strings passed in', () => {
       try {
         mgrs.forward(['40', '40']);
