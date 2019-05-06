@@ -87,7 +87,7 @@ export function inverse(mgrs) {
 
 export function toPoint(mgrs) {
   if (mgrs === '') {
-    throw new TypeError(`toPoint received a blank string`);
+    throw new TypeError('toPoint received a blank string');
   }
   const bbox = UTMtoLL(decode(mgrs.toUpperCase()));
   if (bbox.lat && bbox.lon) {
@@ -504,6 +504,9 @@ function decode(mgrsString) {
   if (mgrsString && mgrsString.length === 0) {
     throw new TypeError('MGRSPoint coverting from nothing');
   }
+
+  //remove any spaces in MGRS String
+  mgrsString = mgrsString.replace(/ /g, '');
 
   const { length } = mgrsString;
 
