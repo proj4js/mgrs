@@ -6,7 +6,7 @@
   "module": "mgrs.js",
   "scripts": {
     "lint": "eslint mgrs.js && eslint test",
-    "test": "npm run build && nyc mocha",
+    "test": "npm run build && nyc mocha test/test.js",
     "build": "mkdir -p dist && rollup -c"
   },
   "repository": {
@@ -27,6 +27,7 @@
     "chai": "^4.2.0",
     "eslint": "^5.16.0",
     "mocha": "^6.1.1",
+    "node-fetch": "^2.5.0",
     "nyc": "^13.3.0",
     "rollup": "^1.9.0"
   }
