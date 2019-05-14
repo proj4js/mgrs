@@ -40,11 +40,13 @@ export default {
  * @param {object} ll Object literal with lat and lon properties on a
  *     WGS84 ellipsoid.
  * @param {int} accuracy Accuracy in digits (5 for 1 m, 4 for 10 m, 3 for
- *      100 m, 2 for 1000 m or 1 for 10000 m). Optional, default is 5.
+ *      100 m, 2 for 1000 m, 1 for 10000 m, or 0 for 100km). Optional, default is 5.
+ * @param {boolean} useCentroid If true, use the centroid of the resulting grid
+ * square to determine the latitude band.  If false, use ll.  False by default.
  * @return {string} the MGRS string for the given location and accuracy.
  */
-export function forward(ll, accuracy) {
-  accuracy = accuracy || 5; // default accuracy 1m
+export function forward(ll, accuracy, useCentroid) {
+  accuracy = typeof accuracy === 'number' ? accuracy : 5; // default accuracy 1m
 
   if (!Array.isArray(ll)) {
     throw new TypeError('forward did not receive an array');
@@ -66,7 +68,7 @@ export function forward(ll, accuracy) {
     throw new TypeError(`forward received a latitude of ${lat}, but this library does not support conversions of points in polar regions below 80°S and above 84°N`);
   }
 
-  return encode(LLtoUTM({ lat, lon }), accuracy);
+  return encode(LLtoUTM({ lat, lon }), accuracy, useCentroid);
 }
 
 /**
@@ -266,7 +268,7 @@ function UTMtoLL(utm) {
   lon = LongOrigin + radToDeg(lon);
 
   let result;
-  if (utm.accuracy) {
+  if (typeof utm.accuracy === 'number') {
     const topRight = UTMtoLL({
       northing: utm.northing + utm.accuracy,
       easting: utm.easting + utm.accuracy,
@@ -321,15 +323,41 @@ function getLetterDesignator(latitude) {
  * @private
  * @param {object} utm An object literal with easting, northing,
  *     zoneLetter, zoneNumber
- * @param {number} accuracy Accuracy in digits (1-5).
+ * @param {number} accuracy Accuracy in digits (0-5).
+ * @param {boolean} useCentroid Use the centroid of the resultant grid square
+ *      to determine the zoneLetter versus the northing and easting.
+ *      False by default.
  * @return {string} MGRS string for the given UTM location.
  */
-function encode(utm, accuracy) {
+function encode(utm, accuracy, useCentroid) {
+
+  const { easting, northing, zoneNumber } = utm;
+
   // prepend with leading zeroes
   const seasting = '00000' + utm.easting,
     snorthing = '00000' + utm.northing;
 
-  return utm.zoneNumber + utm.zoneLetter + get100kID(utm.easting, utm.northing, utm.zoneNumber) + seasting.substr(seasting.length - 5, accuracy) + snorthing.substr(snorthing.length - 5, accuracy);
+
+  let { zoneLetter } = utm;
+
+  if (useCentroid) {
+    // get the point in the center of the grid square
+    const centroidEasting = easting + (Math.pow(10, (5 - accuracy + 1)) / 2);
+    const centroidNorthing = northing + (Math.pow(10, (5 - accuracy + 1)) / 2);
+
+    // convert UTM information about the center into Latitude/Longitude
+    const centroid= UTMtoLL({
+      easting: centroidEasting,
+      northing: centroidNorthing,
+      zoneLetter,
+      zoneNumber
+    });
+
+    // Recalculate the latitude band based on the centroid of the grid square.
+    zoneLetter = getLetterDesignator(centroid.lat);
+  }
+
+  return zoneNumber + zoneLetter + get100kID(easting, northing, zoneNumber) + seasting.substr(seasting.length - 5, accuracy) + snorthing.substr(snorthing.length - 5, accuracy);
 }
 
 /**
