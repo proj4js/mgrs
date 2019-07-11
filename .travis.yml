@@ -9,6 +9,9 @@ node_js:
   - "11"
   - "12"
 
+before_install:
+  - npm install -g npm
+
 install:
   - npm install
 
