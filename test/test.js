@@ -111,6 +111,13 @@ describe ('data validation', () => {
       }
     });
   });
+  describe('getLetterDesignator', () => {
+    it('should return Z when latitude band is outside latitude handled by library', () => {
+      const latitude = -83.3026329741;
+      const letter = mgrs.getLetterDesignator(latitude);
+      letter.should.equal('Z');
+    });
+  });
 });
 
 if (process.env.CHECK_GEOTRANS) {

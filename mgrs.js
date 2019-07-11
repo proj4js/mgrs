@@ -27,12 +27,6 @@ const I = 73; // I
 const O = 79; // O
 const V = 86; // V
 const Z = 90; // Z
-export default {
-  forward,
-  inverse,
-  toPoint
-};
-
 
 /**
  * Conversion of lat/lon to MGRS.
@@ -297,11 +291,11 @@ function UTMtoLL(utm) {
  *     for.
  * @return {char} The letter designator.
  */
-function getLetterDesignator(latitude) {
+export function getLetterDesignator(latitude) {
   if (latitude <= 84 && latitude >= 72) {
     // the X band is 12 degrees high
     return 'X';
-  } else if (latitude < 72 || latitude >= -80) {
+  } else if (latitude < 72 && latitude >= -80) {
     // Latitude bands are lettered C through X, excluding I and O
     const bandLetters = 'CDEFGHJKLMNPQRSTUVWX';
     const bandHeight = 8;
