@@ -17,6 +17,9 @@ describe('First MGRS set', () => {
   it('MGRS reference with 1-digit accuracy correct.', () => {
     mgrs.forward(point,1).should.equal(mgrsStr);
   });
+  it('MGRS reference with 0-digit accuracy correct.', () => {
+    mgrs.forward(point, 0).should.equal('33UXP');
+  });
 });
 describe('Second MGRS set', () => {
   const mgrsStr = '24XWT783908'; // near UTM zone border, so there are two ways to reference this
@@ -36,6 +39,9 @@ describe('Second MGRS set', () => {
   it('MGRS reference with 5-digit accuracy, northing one digit', () => {
     mgrs.forward([0,0.00001],5).should.equal('31NAA6602100001');
   });
+  it('MGRS reference with 0-digit accuracy correct.', () => {
+    mgrs.forward(point, 0).should.equal('25XEN');
+  });
 });
 
 describe ('third mgrs set', () => {
@@ -43,6 +49,9 @@ describe ('third mgrs set', () => {
   const point = [-115.0820944, 36.2361322];
   it('MGRS reference with highest accuracy correct.', () => {
     mgrs.forward(point).should.equal(mgrsStr);
+  });
+  it('MGRS reference with 0-digit accuracy correct.', () => {
+    mgrs.forward(point, 0).should.equal('11SPA');
   });
 });
 
