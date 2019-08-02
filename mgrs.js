@@ -34,11 +34,11 @@ const Z = 90; // Z
  * @param {object} ll Object literal with lat and lon properties on a
  *     WGS84 ellipsoid.
  * @param {int} accuracy Accuracy in digits (5 for 1 m, 4 for 10 m, 3 for
- *      100 m, 2 for 1000 m or 1 for 10000 m). Optional, default is 5.
+ *      100 m, 2 for 1 km, 1 for 10 km or 0 for 100 km). Optional, default is 5.
  * @return {string} the MGRS string for the given location and accuracy.
  */
 export function forward(ll, accuracy) {
-  accuracy = accuracy || 5; // default accuracy 1m
+  accuracy = typeof accuracy === 'number' ? accuracy : 5; // default accuracy 1m
 
   if (!Array.isArray(ll)) {
     throw new TypeError('forward did not receive an array');
@@ -260,7 +260,7 @@ function UTMtoLL(utm) {
   lon = LongOrigin + radToDeg(lon);
 
   let result;
-  if (utm.accuracy) {
+  if (typeof utm.accuracy === 'number') {
     const topRight = UTMtoLL({
       northing: utm.northing + utm.accuracy,
       easting: utm.easting + utm.accuracy,
@@ -315,7 +315,7 @@ export function getLetterDesignator(latitude) {
  * @private
  * @param {object} utm An object literal with easting, northing,
  *     zoneLetter, zoneNumber
- * @param {number} accuracy Accuracy in digits (1-5).
+ * @param {number} accuracy Accuracy in digits (0-5).
  * @return {string} MGRS string for the given UTM location.
  */
 function encode(utm, accuracy) {
