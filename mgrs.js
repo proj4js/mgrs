@@ -98,7 +98,7 @@ export function toPoint(mgrs) {
  * @return {number} the angle in radians.
  */
 function degToRad(deg) {
-  return (deg * (Math.PI / 180.0));
+  return (deg * (Math.PI / 180));
 }
 
 /**
@@ -109,7 +109,7 @@ function degToRad(deg) {
  * @return {number} the angle in degrees.
  */
 function radToDeg(rad) {
-  return (180.0 * (rad / Math.PI));
+  return (180 * (rad / Math.PI));
 }
 
 /**
@@ -126,7 +126,7 @@ function radToDeg(rad) {
 function LLtoUTM(ll) {
   const Lat = ll.lat;
   const Long = ll.lon;
-  const a = 6378137.0; //ellip.radius;
+  const a = 6378137; //ellip.radius;
   const eccSquared = 0.00669438; //ellip.eccsq;
   const k0 = 0.9996;
   const LatRad = degToRad(Lat);
@@ -135,28 +135,28 @@ function LLtoUTM(ll) {
   // (int)
   ZoneNumber = Math.floor((Long + 180) / 6) + 1;
 
-  //Make sure the longitude 180.00 is in Zone 60
+  //Make sure the longitude 180 is in Zone 60
   if (Long === 180) {
     ZoneNumber = 60;
   }
 
   // Special zone for Norway
-  if (Lat >= 56.0 && Lat < 64.0 && Long >= 3.0 && Long < 12.0) {
+  if (Lat >= 56 && Lat < 64 && Long >= 3 && Long < 12) {
     ZoneNumber = 32;
   }
 
   // Special zones for Svalbard
-  if (Lat >= 72.0 && Lat < 84.0) {
-    if (Long >= 0.0 && Long < 9.0) {
+  if (Lat >= 72 && Lat < 84) {
+    if (Long >= 0 && Long < 9) {
       ZoneNumber = 31;
     }
-    else if (Long >= 9.0 && Long < 21.0) {
+    else if (Long >= 9 && Long < 21) {
       ZoneNumber = 33;
     }
-    else if (Long >= 21.0 && Long < 33.0) {
+    else if (Long >= 21 && Long < 33) {
       ZoneNumber = 35;
     }
-    else if (Long >= 33.0 && Long < 42.0) {
+    else if (Long >= 33 && Long < 42) {
       ZoneNumber = 37;
     }
   }
@@ -175,11 +175,11 @@ function LLtoUTM(ll) {
 
   const M = a * ((1 - eccSquared / 4 - 3 * eccSquared * eccSquared / 64 - 5 * eccSquared * eccSquared * eccSquared / 256) * LatRad - (3 * eccSquared / 8 + 3 * eccSquared * eccSquared / 32 + 45 * eccSquared * eccSquared * eccSquared / 1024) * Math.sin(2 * LatRad) + (15 * eccSquared * eccSquared / 256 + 45 * eccSquared * eccSquared * eccSquared / 1024) * Math.sin(4 * LatRad) - (35 * eccSquared * eccSquared * eccSquared / 3072) * Math.sin(6 * LatRad));
 
-  const UTMEasting = (k0 * N * (A + (1 - T + C) * A * A * A / 6.0 + (5 - 18 * T + T * T + 72 * C - 58 * eccPrimeSquared) * A * A * A * A * A / 120.0) + 500000.0);
+  const UTMEasting = (k0 * N * (A + (1 - T + C) * A * A * A / 6 + (5 - 18 * T + T * T + 72 * C - 58 * eccPrimeSquared) * A * A * A * A * A / 120) + 500000);
 
-  let UTMNorthing = (k0 * (M + N * Math.tan(LatRad) * (A * A / 2 + (5 - T + 9 * C + 4 * C * C) * A * A * A * A / 24.0 + (61 - 58 * T + T * T + 600 * C - 330 * eccPrimeSquared) * A * A * A * A * A * A / 720.0)));
-  if (Lat < 0.0) {
-    UTMNorthing += 10000000.0; //10000000 meter offset for
+  let UTMNorthing = (k0 * (M + N * Math.tan(LatRad) * (A * A / 2 + (5 - T + 9 * C + 4 * C * C) * A * A * A * A / 24 + (61 - 58 * T + T * T + 600 * C - 330 * eccPrimeSquared) * A * A * A * A * A * A / 720)));
+  if (Lat < 0) {
+    UTMNorthing += 10000000; //10000000 meter offset for
     // southern hemisphere
   }
 
@@ -217,12 +217,12 @@ function UTMtoLL(utm) {
   }
 
   const k0 = 0.9996;
-  const a = 6378137.0; //ellip.radius;
+  const a = 6378137; //ellip.radius;
   const eccSquared = 0.00669438; //ellip.eccsq;
   const e1 = (1 - Math.sqrt(1 - eccSquared)) / (1 + Math.sqrt(1 - eccSquared));
 
   // remove 500,000 meter offset for longitude
-  const x = UTMEasting - 500000.0;
+  const x = UTMEasting - 500000;
   let y = UTMNorthing;
 
   // We must know somehow if we are in the Northern or Southern
@@ -230,7 +230,7 @@ function UTMtoLL(utm) {
   // if the Zone letter isn't exactly correct it should indicate
   // the hemisphere correctly
   if (zoneLetter < 'N') {
-    y -= 10000000.0; // remove 10,000,000 meter offset used
+    y -= 10000000; // remove 10,000,000 meter offset used
     // for southern hemisphere
   }
 
@@ -510,11 +510,11 @@ northing meters ${mgrsString}`);
 
   const sep = remainder / 2;
 
-  let sepEasting = 0.0;
-  let sepNorthing = 0.0;
+  let sepEasting = 0;
+  let sepNorthing = 0;
   let accuracyBonus, sepEastingString, sepNorthingString;
   if (sep > 0) {
-    accuracyBonus = 100000.0 / Math.pow(10, sep);
+    accuracyBonus = 100000 / Math.pow(10, sep);
     sepEastingString = mgrsString.substring(i, i + sep);
     sepEasting = parseFloat(sepEastingString) * accuracyBonus;
     sepNorthingString = mgrsString.substring(i + sep);
@@ -547,7 +547,7 @@ function getEastingFromChar(e, set) {
   // colOrigin is the letter at the origin of the set for the
   // column
   let curCol = SET_ORIGIN_COLUMN_LETTERS.charCodeAt(set - 1);
-  let eastingValue = 100000.0;
+  let eastingValue = 100000;
   let rewindMarker = false;
 
   while (curCol !== e.charCodeAt(0)) {
@@ -565,7 +565,7 @@ function getEastingFromChar(e, set) {
       curCol = A;
       rewindMarker = true;
     }
-    eastingValue += 100000.0;
+    eastingValue += 100000;
   }
 
   return eastingValue;
@@ -596,7 +596,7 @@ function getNorthingFromChar(n, set) {
   // rowOrigin is the letter at the origin of the set for the
   // column
   let curRow = SET_ORIGIN_ROW_LETTERS.charCodeAt(set - 1);
-  let northingValue = 0.0;
+  let northingValue = 0;
   let rewindMarker = false;
 
   while (curRow !== n.charCodeAt(0)) {
@@ -616,7 +616,7 @@ function getNorthingFromChar(n, set) {
       curRow = A;
       rewindMarker = true;
     }
-    northingValue += 100000.0;
+    northingValue += 100000;
   }
 
   return northingValue;
@@ -636,69 +636,69 @@ function getMinNorthing(zoneLetter) {
   let northing;
   switch (zoneLetter) {
   case 'C':
-    northing = 1100000.0;
+    northing = 1100000;
     break;
   case 'D':
-    northing = 2000000.0;
+    northing = 2000000;
     break;
   case 'E':
-    northing = 2800000.0;
+    northing = 2800000;
     break;
   case 'F':
-    northing = 3700000.0;
+    northing = 3700000;
     break;
   case 'G':
-    northing = 4600000.0;
+    northing = 4600000;
     break;
   case 'H':
-    northing = 5500000.0;
+    northing = 5500000;
     break;
   case 'J':
-    northing = 6400000.0;
+    northing = 6400000;
     break;
   case 'K':
-    northing = 7300000.0;
+    northing = 7300000;
     break;
   case 'L':
-    northing = 8200000.0;
+    northing = 8200000;
     break;
   case 'M':
-    northing = 9100000.0;
+    northing = 9100000;
     break;
   case 'N':
-    northing = 0.0;
+    northing = 0;
     break;
   case 'P':
-    northing = 800000.0;
+    northing = 800000;
     break;
   case 'Q':
-    northing = 1700000.0;
+    northing = 1700000;
     break;
   case 'R':
-    northing = 2600000.0;
+    northing = 2600000;
     break;
   case 'S':
-    northing = 3500000.0;
+    northing = 3500000;
     break;
   case 'T':
-    northing = 4400000.0;
+    northing = 4400000;
     break;
   case 'U':
-    northing = 5300000.0;
+    northing = 5300000;
     break;
   case 'V':
-    northing = 6200000.0;
+    northing = 6200000;
     break;
   case 'W':
-    northing = 7000000.0;
+    northing = 7000000;
     break;
   case 'X':
-    northing = 7900000.0;
+    northing = 7900000;
     break;
   default:
-    northing = -1.0;
+    northing = -1;
   }
-  if (northing >= 0.0) {
+  if (northing >= 0) {
     return northing;
   }
   else {
