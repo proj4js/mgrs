@@ -4,6 +4,7 @@
   "description": "Utility for converting between WGS84 lat/lng and MGRS coordinates",
   "main": "dist/mgrs.js",
   "module": "mgrs.js",
+  "types": "index.d.ts",
   "scripts": {
     "lint": "eslint mgrs.js && eslint test",
     "test": "npm run build && nyc mocha test/test.js",
