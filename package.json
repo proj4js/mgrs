@@ -2,12 +2,13 @@
   "name": "mgrs",
   "version": "1.0.1-alpha",
   "description": "Utility for converting between WGS84 lat/lng and MGRS coordinates",
-  "main": "dist/mgrs.js",
-  "module": "mgrs.js",
+  "main": "dist/mgrs.min.js",
+  "module": "dist/mgrs.esm.js",
   "types": "index.d.ts",
   "scripts": {
     "lint": "eslint mgrs.js && eslint test",
     "test": "npm run build && nyc mocha test/test.js",
+    "clean": "rimraf dist",
     "build": "mkdirp dist && rollup -c"
   },
   "repository": {
@@ -31,6 +32,8 @@
     "mocha": "^6.2.0",
     "node-fetch": "^2.6.0",
     "nyc": "^14.1.1",
-    "rollup": "^1.21.2"
+    "rimraf": "^3.0.0",
+    "rollup": "^1.21.2",
+    "rollup-plugin-terser": "^5.1.1"
   }
 }
