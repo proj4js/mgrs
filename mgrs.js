@@ -287,7 +287,7 @@ function UTMtoLL(utm) {
 /**
  * Calculates the MGRS letter designator for the given latitude.
  *
- * @private // TODO: is this actually private? If so, why is it exported?
+ * @private (Not intended for public API, only exported for testing.)
  * @param {number} latitude The latitude in WGS84 to get the letter designator
  *     for.
  * @return {string} The letter designator.
