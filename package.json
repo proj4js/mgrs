@@ -10,7 +10,7 @@
     "pretest": "npm run clean && npm run build",
     "test": "nyc mocha test/test.js",
     "clean": "rimraf dist",
-    "build": "mkdirp dist && rollup -c"
+    "build": "mkdir dist && rollup -c"
   },
   "repository": {
     "type": "git",
@@ -29,7 +29,6 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "eslint": "^6.3.0",
-    "mkdirp": "^0.5.1",
     "mocha": "^6.2.0",
     "node-fetch": "^2.6.0",
     "nyc": "^14.1.1",
