@@ -14,10 +14,16 @@ const opts = {
     file: 'dist/mgrs.esm.js',
     format: 'esm',
     sourcemap: true,
+  }, {
+    exports: 'named',
+    file: 'dist/mgrs.js',
+    format: 'umd',
+    name: 'mgrs',
+    sourcemap: false    
   }],
   plugins: [
     terser({
-      // Defaults are fine for now
+      include: [/^.+\.min\.js$/, '*esm*']
     }),
   ]
 };
