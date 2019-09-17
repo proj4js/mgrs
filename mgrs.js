@@ -29,11 +29,11 @@ const V = 86; // V
 const Z = 90; // Z
 
 /**
- * Conversion of lat/lon to MGRS.
+ * Convert lat/lon to MGRS.
  *
- * @param {object} ll Object literal with lat and lon properties on a
+ * @param {[number, number]} ll Array with longitude and latitude on a
  *     WGS84 ellipsoid.
- * @param {int} accuracy Accuracy in digits (5 for 1 m, 4 for 10 m, 3 for
+ * @param {number} [accuracy=5] Accuracy in digits (5 for 1 m, 4 for 10 m, 3 for
  *      100 m, 2 for 1 km, 1 for 10 km or 0 for 100 km). Optional, default is 5.
  * @return {string} the MGRS string for the given location and accuracy.
  */
@@ -64,12 +64,13 @@ export function forward(ll, accuracy) {
 }
 
 /**
- * Conversion of MGRS to lat/lon.
+ * Convert MGRS to lat/lon bounding box.
  *
  * @param {string} mgrs MGRS string.
- * @return {array} An array with left (longitude), bottom (latitude), right
- *     (longitude) and top (latitude) values in WGS84, representing the
- *     bounding box for the provided MGRS reference.
+ * @return {[number,number,number,number]} An array with left (longitude),
+ *    bottom (latitude), right
+ *    (longitude) and top (latitude) values in WGS84, representing the
+ *    bounding box for the provided MGRS reference.
  */
 export function inverse(mgrs) {
   const bbox = UTMtoLL(decode(mgrs.toUpperCase()));
@@ -286,10 +287,10 @@ function UTMtoLL(utm) {
 /**
  * Calculates the MGRS letter designator for the given latitude.
  *
- * @private
- * @param {number} lat The latitude in WGS84 to get the letter designator
+ * @private (Not intended for public API, only exported for testing.)
+ * @param {number} latitude The latitude in WGS84 to get the letter designator
  *     for.
- * @return {char} The letter designator.
+ * @return {string} The letter designator.
  */
 export function getLetterDesignator(latitude) {
   if (latitude <= 84 && latitude >= 72) {
@@ -539,7 +540,7 @@ northing meters ${mgrsString}`);
  * should be added to the other, secondary easting value.
  *
  * @private
- * @param {char} e The first letter from a two-letter MGRS 100´k zone.
+ * @param {string} e The first letter from a two-letter MGRS 100´k zone.
  * @param {number} set The MGRS table set for the zone number.
  * @return {number} The easting value for the given letter and set.
  */
@@ -582,7 +583,7 @@ function getEastingFromChar(e, set) {
  * to be added for the zone letter of the MGRS coordinate.
  *
  * @private
- * @param {char} n Second letter of the MGRS 100k zone
+ * @param {string} n Second letter of the MGRS 100k zone
  * @param {number} set The MGRS table set number, which is dependent on the
  *     UTM zone number.
  * @return {number} The northing value for the given letter and set.
@@ -629,7 +630,7 @@ function getNorthingFromChar(n, set) {
  * Ported from Geotrans' c Lattitude_Band_Value structure table.
  *
  * @private
- * @param {char} zoneLetter The MGRS zone to get the min northing for.
+ * @param {string} zoneLetter The MGRS zone to get the min northing for.
  * @return {number}
  */
 function getMinNorthing(zoneLetter) {

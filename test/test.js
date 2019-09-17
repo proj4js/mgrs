@@ -1,5 +1,5 @@
 const should = require('chai').should(); // eslint-disable-line no-unused-vars
-const mgrs = require('../dist/mgrs');
+const mgrs = require('../');
 const { readFileSync } = require('fs');
 
 describe('First MGRS set', () => {
