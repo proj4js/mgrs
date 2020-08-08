@@ -133,13 +133,19 @@ if (process.env.CHECK_GEOTRANS) {
   describe('Consistency with GEOTRANS', () => {
     it('Should be consistent with GEOTRANS', () => {
       const fileText = readFileSync('./test/testing-data.csv', 'utf8');
-      const lines = fileText.split('\n').filter(Boolean);
+      const lines = fileText.split('\n')
+        .filter(Boolean) // remove blank lines if any
+        .slice(1); // remove header
       lines.forEach(line => {
-        const [ mgrsString, expectedLatitude, expectedLongitude ] = line.split('\t');
+        const [ mgrsString, expectedLongitude, expectedLatitude ] = line.split('\t');
+
+        // mgrs library doesn't support polar regions
+        if (['A','B','Y','Z'].includes(mgrsString[0])) return;
+
         const [ actualLongitude, actualLatitude ] = mgrs.toPoint(mgrsString);
         try {
-          actualLatitude.should.equal(expectedLatitude);
-          actualLongitude.should.equal(expectedLongitude);
+          actualLatitude.should.be.closeTo(Number.parseFloat(expectedLatitude), 0.0000015);
+          actualLongitude.should.be.closeTo(Number.parseFloat(expectedLongitude), 0.0000015);
         } catch (error) {
           console.error('mgrsString:', mgrsString);
           throw error;
