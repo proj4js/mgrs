@@ -10,13 +10,15 @@
     "pretest": "npm run clean && npm run build",
     "test": "nyc mocha test/test.js",
     "clean": "rimraf dist",
-    "build": "mkdir dist && rollup -c"
+    "build": "mkdir dist && rollup -c",
+    "setup": "cd test && node setup.js"
   },
   "repository": {
     "type": "git",
     "url": "git://github.com/proj4js/mgrs.git"
   },
   "keywords": [
+    "geodesy",
     "mgrs",
     "proj4",
     "gis"
