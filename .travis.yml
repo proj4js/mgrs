@@ -4,9 +4,7 @@ node_js:
   - "10"
   - "11"
   - "12"
-  - "current"
-  - "default"
-  - "stable"
+  - "node"
 
 before_install:
   - npm install -g npm
