@@ -29,6 +29,48 @@ const V = 86; // V
 const Z = 90; // Z
 
 /**
+ * First eccentricity squared
+ * {number} @private
+ */
+const ECC_SQUARED = 0.00669438;
+
+/**
+ * Scale factor along the central meridian
+ * {number} @private
+ */
+const SCALE_FACTOR = 0.9996;
+
+/**
+ * Semimajor axis (half the width of the earth) in meters
+ * {number} @private
+ */
+const SEMI_MAJOR_AXIS = 6378137;
+
+/**
+ * The easting of the central meridian of each UTM zone
+ * {number} @private
+ */
+const EASTING_OFFSET = 500000;
+
+/**
+ * The northing of the equator for southern hemisphere locations (in UTM)
+ * {number} @private
+ */
+const NORTHING_OFFFSET = 10000000;
+
+/**
+ * UTM zone width in degrees
+ * {number} private
+ */
+const UTM_ZONE_WIDTH = 6;
+
+/**
+ * Half the width of a UTM zone in degrees
+ * {number} private
+ */
+const HALF_UTM_ZONE_WIDTH = UTM_ZONE_WIDTH / 2;
+
+/**
  * Convert lat/lon to MGRS.
  *
  * @param {[number, number]} ll Array with longitude and latitude on a
@@ -127,9 +169,7 @@ function radToDeg(rad) {
 function LLtoUTM(ll) {
   const Lat = ll.lat;
   const Long = ll.lon;
-  const a = 6378137; //ellip.radius;
-  const eccSquared = 0.00669438; //ellip.eccsq;
-  const k0 = 0.9996;
+  const a = SEMI_MAJOR_AXIS;
   const LatRad = degToRad(Lat);
   const LongRad = degToRad(Long);
   let ZoneNumber;
@@ -162,26 +202,25 @@ function LLtoUTM(ll) {
     }
   }
 
-  const LongOrigin = (ZoneNumber - 1) * 6 - 180 + 3; //+3 puts origin
-  // in middle of
-  // zone
+  // +HALF_UTM_ZONE_WIDTH puts origin in middle of zone
+  const LongOrigin = (ZoneNumber - 1) * UTM_ZONE_WIDTH - 180 + HALF_UTM_ZONE_WIDTH;
+
   const LongOriginRad = degToRad(LongOrigin);
 
-  const eccPrimeSquared = (eccSquared) / (1 - eccSquared);
+  const eccPrimeSquared = (ECC_SQUARED) / (1 - ECC_SQUARED);
 
-  const N = a / Math.sqrt(1 - eccSquared * Math.sin(LatRad) * Math.sin(LatRad));
+  const N = a / Math.sqrt(1 - ECC_SQUARED * Math.sin(LatRad) * Math.sin(LatRad));
   const T = Math.tan(LatRad) * Math.tan(LatRad);
   const C = eccPrimeSquared * Math.cos(LatRad) * Math.cos(LatRad);
   const A = Math.cos(LatRad) * (LongRad - LongOriginRad);
 
-  const M = a * ((1 - eccSquared / 4 - 3 * eccSquared * eccSquared / 64 - 5 * eccSquared * eccSquared * eccSquared / 256) * LatRad - (3 * eccSquared / 8 + 3 * eccSquared * eccSquared / 32 + 45 * eccSquared * eccSquared * eccSquared / 1024) * Math.sin(2 * LatRad) + (15 * eccSquared * eccSquared / 256 + 45 * eccSquared * eccSquared * eccSquared / 1024) * Math.sin(4 * LatRad) - (35 * eccSquared * eccSquared * eccSquared / 3072) * Math.sin(6 * LatRad));
+  const M = a * ((1 - ECC_SQUARED / 4 - 3 * ECC_SQUARED * ECC_SQUARED / 64 - 5 * ECC_SQUARED * ECC_SQUARED * ECC_SQUARED / 256) * LatRad - (3 * ECC_SQUARED / 8 + 3 * ECC_SQUARED * ECC_SQUARED / 32 + 45 * ECC_SQUARED * ECC_SQUARED * ECC_SQUARED / 1024) * Math.sin(2 * LatRad) + (15 * ECC_SQUARED * ECC_SQUARED / 256 + 45 * ECC_SQUARED * ECC_SQUARED * ECC_SQUARED / 1024) * Math.sin(4 * LatRad) - (35 * ECC_SQUARED * ECC_SQUARED * ECC_SQUARED / 3072) * Math.sin(6 * LatRad));
 
-  const UTMEasting = (k0 * N * (A + (1 - T + C) * A * A * A / 6 + (5 - 18 * T + T * T + 72 * C - 58 * eccPrimeSquared) * A * A * A * A * A / 120) + 500000);
+  const UTMEasting = (SCALE_FACTOR * N * (A + (1 - T + C) * A * A * A / 6 + (5 - 18 * T + T * T + 72 * C - 58 * eccPrimeSquared) * A * A * A * A * A / 120) + EASTING_OFFSET);
 
-  let UTMNorthing = (k0 * (M + N * Math.tan(LatRad) * (A * A / 2 + (5 - T + 9 * C + 4 * C * C) * A * A * A * A / 24 + (61 - 58 * T + T * T + 600 * C - 330 * eccPrimeSquared) * A * A * A * A * A * A / 720)));
+  let UTMNorthing = (SCALE_FACTOR * (M + N * Math.tan(LatRad) * (A * A / 2 + (5 - T + 9 * C + 4 * C * C) * A * A * A * A / 24 + (61 - 58 * T + T * T + 600 * C - 330 * eccPrimeSquared) * A * A * A * A * A * A / 720)));
   if (Lat < 0) {
-    UTMNorthing += 10000000; //10000000 meter offset for
-    // southern hemisphere
+    UTMNorthing += NORTHING_OFFFSET;
   }
 
   return {
@@ -217,13 +256,11 @@ function UTMtoLL(utm) {
     return null;
   }
 
-  const k0 = 0.9996;
-  const a = 6378137; //ellip.radius;
-  const eccSquared = 0.00669438; //ellip.eccsq;
-  const e1 = (1 - Math.sqrt(1 - eccSquared)) / (1 + Math.sqrt(1 - eccSquared));
+  const a = SEMI_MAJOR_AXIS;
+  const e1 = (1 - Math.sqrt(1 - ECC_SQUARED)) / (1 + Math.sqrt(1 - ECC_SQUARED));
 
   // remove 500,000 meter offset for longitude
-  const x = UTMEasting - 500000;
+  const x = UTMEasting - EASTING_OFFSET;
   let y = UTMNorthing;
 
   // We must know somehow if we are in the Northern or Southern
@@ -231,28 +268,25 @@ function UTMtoLL(utm) {
   // if the Zone letter isn't exactly correct it should indicate
   // the hemisphere correctly
   if (zoneLetter < 'N') {
-    y -= 10000000; // remove 10,000,000 meter offset used
-    // for southern hemisphere
+    y -= NORTHING_OFFFSET; // remove offset used for southern hemisphere
   }
 
-  // There are 60 zones with zone 1 being at West -180 to -174
-  const LongOrigin = (zoneNumber - 1) * 6 - 180 + 3; // +3 puts origin
-  // in middle of
-  // zone
+  // +HALF_UTM_ZONE_WIDTH puts origin in middle of zone
+  const LongOrigin = (zoneNumber - 1) * UTM_ZONE_WIDTH - 180 + HALF_UTM_ZONE_WIDTH;
 
-  const eccPrimeSquared = (eccSquared) / (1 - eccSquared);
+  const eccPrimeSquared = (ECC_SQUARED) / (1 - ECC_SQUARED);
 
-  const M = y / k0;
-  const mu = M / (a * (1 - eccSquared / 4 - 3 * eccSquared * eccSquared / 64 - 5 * eccSquared * eccSquared * eccSquared / 256));
+  const M = y / SCALE_FACTOR;
+  const mu = M / (a * (1 - ECC_SQUARED / 4 - 3 * ECC_SQUARED * ECC_SQUARED / 64 - 5 * ECC_SQUARED * ECC_SQUARED * ECC_SQUARED / 256));
 
   const phi1Rad = mu + (3 * e1 / 2 - 27 * e1 * e1 * e1 / 32) * Math.sin(2 * mu) + (21 * e1 * e1 / 16 - 55 * e1 * e1 * e1 * e1 / 32) * Math.sin(4 * mu) + (151 * e1 * e1 * e1 / 96) * Math.sin(6 * mu);
   // double phi1 = ProjMath.radToDeg(phi1Rad);
 
-  const N1 = a / Math.sqrt(1 - eccSquared * Math.sin(phi1Rad) * Math.sin(phi1Rad));
+  const N1 = a / Math.sqrt(1 - ECC_SQUARED * Math.sin(phi1Rad) * Math.sin(phi1Rad));
   const T1 = Math.tan(phi1Rad) * Math.tan(phi1Rad);
   const C1 = eccPrimeSquared * Math.cos(phi1Rad) * Math.cos(phi1Rad);
-  const R1 = a * (1 - eccSquared) / Math.pow(1 - eccSquared * Math.sin(phi1Rad) * Math.sin(phi1Rad), 1.5);
-  const D = x / (N1 * k0);
+  const R1 = a * (1 - ECC_SQUARED) / Math.pow(1 - ECC_SQUARED * Math.sin(phi1Rad) * Math.sin(phi1Rad), 1.5);
+  const D = x / (N1 * SCALE_FACTOR);
 
   let lat = phi1Rad - (N1 * Math.tan(phi1Rad) / R1) * (D * D / 2 - (5 + 3 * T1 + 10 * C1 - 4 * C1 * C1 - 9 * eccPrimeSquared) * D * D * D * D / 24 + (61 + 90 * T1 + 298 * C1 + 45 * T1 * T1 - 252 * eccPrimeSquared - 3 * C1 * C1) * D * D * D * D * D * D / 720);
   lat = radToDeg(lat);
