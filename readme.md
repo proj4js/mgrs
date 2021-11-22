@@ -35,4 +35,8 @@ com.bbn.openmap.proj.coords Java package. An initial port was initially created
 by Patrice G. Cappelaere and included in Community Mapbuilder
 (http://svn.codehaus.org/mapbuilder/), which is licensed under the LGPL license
 as per http://www.gnu.org/copyleft/lesser.html. OpenMap is licensed under the
-[following license agreement](openmap.md):
+[this license agreement](openmap.md)
+
+# references:
+- Wikipedia: https://en.wikipedia.org/wiki/Military_Grid_Reference_System
+- GEOTRANS: https://earth-info.nga.mil/#geotrans
