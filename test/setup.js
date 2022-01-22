@@ -1,5 +1,20 @@
 const { writeFileSync } = require('fs');
-const fetch = require('node-fetch');
+const https = require("https");
+
+function fetchAsText (url) {
+  return new Promise(resolve => {
+    let text = "";
+    https.get(url, response => {
+      response.on('data', chunk => {
+        text += chunk;
+      });
+
+      response.on('end', () => {
+        resolve(text);
+      });
+    });
+  });
+}
 
 async function process() {
   // mgrsToGeo_WE.txt was originally created by running the tests
@@ -8,7 +23,7 @@ async function process() {
   // geotrans3.8/SpreadsheetTester/TestFiles/outputs/output/mgrsToGeo_WE.txt
   const url = 'https://s3.amazonaws.com/mgrs.io/mgrsToGeo_WE.txt';
 
-  const text = await fetch(url).then(response => response.text());
+  const text = await fetchAsText(url);
 
   // eslint-disable-next-line no-unused-vars
   const [header, description, blank, ...rows] = text.split(/\r?\n/);
