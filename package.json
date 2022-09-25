@@ -5,6 +5,15 @@
   "main": "dist/mgrs.min.js",
   "module": "dist/mgrs.esm.js",
   "types": "index.d.ts",
+  "files": [
+    "mgrs.js",
+    "index.d.ts",
+    "dist/mgrs.esm.js",
+    "dist/mgrs.esm.js.map",
+    "dist/mgrs.js",
+    "dist/mgrs.min.js",
+    "dist/mgrs.min.js.map"
+  ],
   "scripts": {
     "lint": "eslint mgrs.js && eslint test",
     "pretest": "npm run clean && npm run build",
