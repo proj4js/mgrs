@@ -116,7 +116,7 @@ export function forward(ll, accuracy) {
  */
 export function inverse(mgrs) {
   const bbox = UTMtoLL(decode(mgrs.toUpperCase()));
-  if (bbox.lat && bbox.lon) {
+  if (typeof bbox.lat === 'number' && typeof bbox.lon === 'number') {
     return [bbox.lon, bbox.lat, bbox.lon, bbox.lat];
   }
   return [bbox.left, bbox.bottom, bbox.right, bbox.top];
@@ -127,7 +127,7 @@ export function toPoint(mgrs) {
     throw new TypeError('toPoint received a blank string');
   }
   const bbox = UTMtoLL(decode(mgrs.toUpperCase()));
-  if (bbox.lat && bbox.lon) {
+  if (typeof bbox.lat === 'number' && typeof bbox.lon === 'number') {
     return [bbox.lon, bbox.lat];
   }
   return [(bbox.left + bbox.right) / 2, (bbox.top + bbox.bottom) / 2];
