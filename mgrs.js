@@ -547,12 +547,11 @@ northing meters ${mgrsString}`);
 
   let sepEasting = 0;
   let sepNorthing = 0;
-  let accuracyBonus, sepEastingString, sepNorthingString;
+  const accuracyBonus = 100000 / Math.pow(10, sep);
   if (sep > 0) {
-    accuracyBonus = 100000 / Math.pow(10, sep);
-    sepEastingString = mgrsString.substring(i, i + sep);
+    const sepEastingString = mgrsString.substring(i, i + sep);
     sepEasting = parseFloat(sepEastingString) * accuracyBonus;
-    sepNorthingString = mgrsString.substring(i + sep);
+    const sepNorthingString = mgrsString.substring(i + sep);
     sepNorthing = parseFloat(sepNorthingString) * accuracyBonus;
   }
 
