@@ -71,42 +71,42 @@ const UTM_ZONE_WIDTH = 6;
 const HALF_UTM_ZONE_WIDTH = UTM_ZONE_WIDTH / 2;
 
 /**
- * Convert lat/lon to MGRS.
+ * Convert lat/long to MGRS.
  *
- * @param {[number, number]} ll Array with longitude and latitude on a
+ * @param {[number, number]} Array with longitude and latitude on a
  *     WGS84 ellipsoid.
  * @param {number} [accuracy=5] Accuracy in digits (5 for 1 m, 4 for 10 m, 3 for
  *      100 m, 2 for 1 km, 1 for 10 km or 0 for 100 km). Optional, default is 5.
  * @return {string} the MGRS string for the given location and accuracy.
  */
-export function forward(ll, accuracy) {
+export function LLtoMGRS(ll, accuracy) {
   accuracy = typeof accuracy === 'number' ? accuracy : 5; // default accuracy 1m
 
   if (!Array.isArray(ll)) {
-    throw new TypeError('forward did not receive an array');
+    throw new TypeError('Did not receive an array');
   }
 
   if (typeof ll[0] === 'string' || typeof ll[1] === 'string') {
-    throw new TypeError('forward received an array of strings, but it only accepts an array of numbers.');
+    throw new TypeError('Received an array of strings, expected an array of numbers');
   }
 
-  const [ lon, lat ] = ll;
-  if (lon < -180 || lon > 180) {
-    throw new TypeError(`forward received an invalid longitude of ${lon}`);
+  const [ long, lat ] = ll;
+  if (long < -180 || long > 180) {
+    throw new TypeError(`Received an invalid longitude of ${long}`);
   }
   if (lat < -90 || lat > 90) {
-    throw new TypeError(`forward received an invalid latitude of ${lat}`);
+    throw new TypeError(`Received an invalid latitude of ${lat}`);
   }
 
   if (lat < -80 || lat > 84) {
-    throw new TypeError(`forward received a latitude of ${lat}, but this library does not support conversions of points in polar regions below 80°S and above 84°N`);
+    throw new TypeError(`Received a latitude of ${lat}. Support only conversions of points in polar regions below 80°S and above 84°N`);
   }
 
-  return encode(LLtoUTM({ lat, lon }), accuracy);
+  return encode(LLtoUTM({ lat, long }), accuracy);
 }
 
 /**
- * Convert MGRS to lat/lon bounding box.
+ * Convert MGRS to lat/long bounding box.
  *
  * @param {string} mgrs MGRS string.
  * @return {[number,number,number,number]} An array with left (longitude),
@@ -114,21 +114,21 @@ export function forward(ll, accuracy) {
  *    (longitude) and top (latitude) values in WGS84, representing the
  *    bounding box for the provided MGRS reference.
  */
-export function inverse(mgrs) {
+export function MGRStoBBoxLL(mgrs) {
   const bbox = UTMtoLL(decode(mgrs.toUpperCase()));
-  if (typeof bbox.lat === 'number' && typeof bbox.lon === 'number') {
-    return [bbox.lon, bbox.lat, bbox.lon, bbox.lat];
+  if (typeof bbox.lat === 'number' && typeof bbox.long === 'number') {
+    return [bbox.long, bbox.lat, bbox.long, bbox.lat];
   }
   return [bbox.left, bbox.bottom, bbox.right, bbox.top];
 }
 
-export function toPoint(mgrs) {
+export function MGRStoLL(mgrs) {
   if (mgrs === '') {
-    throw new TypeError('toPoint received a blank string');
+    throw new TypeError('Received a blank string');
   }
   const bbox = UTMtoLL(decode(mgrs.toUpperCase()));
-  if (typeof bbox.lat === 'number' && typeof bbox.lon === 'number') {
-    return [bbox.lon, bbox.lat];
+  if (typeof bbox.lat === 'number' && typeof bbox.long === 'number') {
+    return [bbox.long, bbox.lat];
   }
   return [(bbox.left + bbox.right) / 2, (bbox.top + bbox.bottom) / 2];
 }
@@ -160,7 +160,7 @@ function radToDeg(rad) {
  * using the WGS84 ellipsoid.
  *
  * @private
- * @param {object} ll Object literal with lat and lon properties
+ * @param {object} ll Object literal with lat and long properties
  *     representing the WGS84 coordinate to be converted.
  * @return {object} Object literal containing the UTM value with easting,
  *     northing, zoneNumber and zoneLetter properties, and an optional
@@ -168,7 +168,7 @@ function radToDeg(rad) {
  */
 function LLtoUTM(ll) {
   const Lat = ll.lat;
-  const Long = ll.lon;
+  const Long = ll.long;
   const a = SEMI_MAJOR_AXIS;
   const LatRad = degToRad(Lat);
   const LongRad = degToRad(Long);
@@ -241,7 +241,7 @@ function LLtoUTM(ll) {
  *     and zoneLetter properties. If an optional accuracy property is
  *     provided (in meters), a bounding box will be returned instead of
  *     latitude and longitude.
- * @return {object} An object literal containing either lat and lon values
+ * @return {object} An object literal containing either lat and long values
  *     (if no accuracy was provided), or top, right, bottom and left values
  *     for the bounding box calculated according to the provided accuracy.
  *     Returns null if the conversion failed.
@@ -291,8 +291,8 @@ function UTMtoLL(utm) {
   let lat = phi1Rad - (N1 * Math.tan(phi1Rad) / R1) * (D * D / 2 - (5 + 3 * T1 + 10 * C1 - 4 * C1 * C1 - 9 * eccPrimeSquared) * D * D * D * D / 24 + (61 + 90 * T1 + 298 * C1 + 45 * T1 * T1 - 252 * eccPrimeSquared - 3 * C1 * C1) * D * D * D * D * D * D / 720);
   lat = radToDeg(lat);
 
-  let lon = (D - (1 + 2 * T1 + C1) * D * D * D / 6 + (5 - 2 * C1 + 28 * T1 - 3 * C1 * C1 + 8 * eccPrimeSquared + 24 * T1 * T1) * D * D * D * D * D / 120) / Math.cos(phi1Rad);
-  lon = LongOrigin + radToDeg(lon);
+  let long = (D - (1 + 2 * T1 + C1) * D * D * D / 6 + (5 - 2 * C1 + 28 * T1 - 3 * C1 * C1 + 8 * eccPrimeSquared + 24 * T1 * T1) * D * D * D * D * D / 120) / Math.cos(phi1Rad);
+  long = LongOrigin + radToDeg(long);
 
   let result;
   if (typeof utm.accuracy === 'number') {
@@ -304,15 +304,15 @@ function UTMtoLL(utm) {
     });
     result = {
       top: topRight.lat,
-      right: topRight.lon,
+      right: topRight.long,
       bottom: lat,
-      left: lon
+      left: long
     };
   }
   else {
     result = {
       lat,
-      lon
+      long
     };
   }
   return result;
@@ -481,7 +481,7 @@ function getLetter100kID(column, row, parm) {
 function decode(mgrsString) {
 
   if (mgrsString && mgrsString.length === 0) {
-    throw new TypeError('MGRSPoint coverting from nothing');
+    throw new TypeError('Coverting from nothing');
   }
 
   //remove any spaces in MGRS String
@@ -497,7 +497,7 @@ function decode(mgrsString) {
   // get Zone number
   while (!(/[A-Z]/).test(testChar = mgrsString.charAt(i))) {
     if (i >= 2) {
-      throw new Error(`MGRSPoint bad conversion from: ${mgrsString}`);
+      throw new Error(`Bad conversion from ${mgrsString}`);
     }
     sb += testChar;
     i++;
@@ -508,14 +508,14 @@ function decode(mgrsString) {
   if (i === 0 || i + 3 > length) {
     // A good MGRS string has to be 4-5 digits long,
     // ##AAA/#AAA at least.
-    throw new Error(`MGRSPoint bad conversion from ${mgrsString}`);
+    throw new Error(`Bad conversion from ${mgrsString}`);
   }
 
   const zoneLetter = mgrsString.charAt(i++);
 
   // Should we check the zone letter here? Why not.
   if (zoneLetter <= 'A' || zoneLetter === 'B' || zoneLetter === 'Y' || zoneLetter >= 'Z' || zoneLetter === 'I' || zoneLetter === 'O') {
-    throw new Error(`MGRSPoint zone letter ${zoneLetter} not handled: ${mgrsString}`);
+    throw new Error(`Zone letter "${zoneLetter}" not handled, converting from ${mgrsString}`);
   }
 
   hunK = mgrsString.substring(i, i += 2);
@@ -537,10 +537,10 @@ function decode(mgrsString) {
   const remainder = length - i;
 
   if (remainder % 2 !== 0) {
-    throw new Error(`MGRSPoint has to have an even number
+    throw new Error(`Expected an even number
 of digits after the zone letter and two 100km letters - front
 half for easting meters, second half for
-northing meters ${mgrsString}`);
+northing meters while converting from ${mgrsString}`);
   }
 
   const sep = remainder / 2;
@@ -625,7 +625,7 @@ function getEastingFromChar(e, set) {
 function getNorthingFromChar(n, set) {
 
   if (n > 'V') {
-    throw new TypeError(`MGRSPoint given invalid Northing ${n}`);
+    throw new TypeError(`Given invalid Northing ${n}`);
   }
 
   // rowOrigin is the letter at the origin of the set for the
@@ -737,7 +737,7 @@ function getMinNorthing(zoneLetter) {
     return northing;
   }
   else {
-    throw new TypeError(`Invalid zone letter: ${zoneLetter}`);
+    throw new TypeError(`Invalid zone letter "${zoneLetter}"`);
   }
 
 }
