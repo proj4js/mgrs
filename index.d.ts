@@ -2,7 +2,7 @@ declare module "mgrs" {
     /**
      * Convert lat/long to MGRS.
      *
-     * @param {[number, number]} Array with longitude and latitude on a
+     * @param {[number, number]} An array with longitude and latitude on a
      *     WGS84 ellipsoid.
      * @param {number} [accuracy=5] Accuracy in digits (5 for 1 m, 4 for 10 m, 3 for
      *      100 m, 2 for 1 km, 1 for 10 km or 0 for 100 km). Optional, default is 5.
