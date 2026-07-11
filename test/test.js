@@ -145,7 +145,7 @@ describe ('data validation', () => {
       center[0].should.be.closeTo(18.729117730990232, 1e-9);
       center[1].should.be.closeTo(8.587478059960034, 1e-9);
       mgrs.forward(center, 0).should.equal('34PBQ');
-    })
+    });
   });
 });
 
