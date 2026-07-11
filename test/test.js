@@ -127,6 +127,26 @@ describe ('data validation', () => {
       letter.should.equal('Z');
     });
   });
+  describe('0-digit accuracy (100 km square)', () => {
+    it('inverse returns the full square, not a zero-size box', () => {
+      const bbox = mgrs.inverse('33UXP');
+      (bbox[2] - bbox[0]).should.be.greaterThan(0.5);
+      (bbox[3] - bbox[1]).should.be.greaterThan(0.5);
+    });
+    it('toPoint returns the centre of the square and round-trips', () => {
+      const bbox = mgrs.inverse('33UXP');
+      const center = mgrs.toPoint('33UXP');
+      center[0].should.be.closeTo((bbox[0] + bbox[2]) / 2, 1e-9);
+      center[1].should.be.closeTo((bbox[1] + bbox[3]) / 2, 1e-9);
+      mgrs.forward(center, 0).should.equal('33UXP');
+    });
+    it('toPoint returns the center of the square and round-trips (2)', () => {
+      const center = mgrs.toPoint('34PBQ');
+      center[0].should.be.closeTo(18.729117730990232, 1e-9);
+      center[1].should.be.closeTo(8.587478059960034, 1e-9);
+      mgrs.forward(center, 0).should.equal('34PBQ');
+    })
+  });
 });
 
 if (process.env.CHECK_GEOTRANS) {
