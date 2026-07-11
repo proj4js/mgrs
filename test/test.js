@@ -140,6 +140,12 @@ describe ('data validation', () => {
       center[1].should.be.closeTo((bbox[1] + bbox[3]) / 2, 1e-9);
       mgrs.forward(center, 0).should.equal('33UXP');
     });
+    it('toPoint returns the center of the square and round-trips (2)', () => {
+      const center = mgrs.toPoint('34PBQ');
+      center[0].should.be.closeTo(18.729117730990232, 1e-9);
+      center[1].should.be.closeTo(8.587478059960034, 1e-9);
+      mgrs.forward(center, 0).should.equal('34PBQ');
+    })
   });
 });
 
