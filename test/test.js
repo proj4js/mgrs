@@ -174,3 +174,22 @@ if (process.env.CHECK_GEOTRANS) {
     });
   });
 }
+
+describe('Invalid 100km column letters and zone numbers', () => {
+  it('rejects a column letter not used in the zone', () => {
+    // zone 1 uses A-H; K belongs to zones 2, 5, ...
+    (() => mgrs.toPoint('01CKM4186716915')).should.throw();
+    (() => mgrs.toPoint('02CAM4186716915')).should.throw();
+    (() => mgrs.toPoint('03CJM4186716915')).should.throw();
+    (() => mgrs.inverse('1CKM4186716915')).should.throw();
+  });
+  it('rejects zone numbers outside 1-60', () => {
+    (() => mgrs.toPoint('00NAA6602100000')).should.throw();
+    (() => mgrs.toPoint('61NAA6602100000')).should.throw();
+  });
+  it('still accepts the letters used in the zone', () => {
+    mgrs.toPoint('01CDM4186716915')[1].should.be.closeTo(-79.99999, 0.0001);
+    mgrs.toPoint('02CMS4186716915')[1].should.be.closeTo(-79.99999, 0.0001);
+    mgrs.toPoint('03CVM4186716915')[1].should.be.closeTo(-79.99999, 0.0001);
+  });
+});
