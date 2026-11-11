@@ -504,6 +504,9 @@ function decode(mgrsString) {
   }
 
   const zoneNumber = parseInt(sb, 10);
+  if (zoneNumber < 1 || zoneNumber > 60) {
+    throw new Error(`MGRSPoint zone number ${zoneNumber} not in 1-60: ${mgrsString}`);
+  }
 
   if (i === 0 || i + 3 > length) {
     // A good MGRS string has to be 4-5 digits long,
@@ -523,6 +526,11 @@ function decode(mgrsString) {
   const set = get100kSetForZone(zoneNumber);
 
   const east100k = getEastingFromChar(hunK.charAt(0), set);
+  // each zone uses 8 of the 24 column letters (100 km to 800 km); a letter
+  // from another zone used to give an easting of up to 2,400 km
+  if (east100k > 800000) {
+    throw new Error(`MGRSPoint 100km column letter ${hunK.charAt(0)} not used in zone ${zoneNumber}: ${mgrsString}`);
+  }
   let north100k = getNorthingFromChar(hunK.charAt(1), set);
 
   // We have a bug where the northing may be 2000000 too low.
